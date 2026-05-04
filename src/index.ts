@@ -550,10 +550,13 @@ export class ModalWindow extends WebComponent.create('modal-window') {
     // Event: key press.
     // =================
 
-    _handleKeyDown ({ key }:KeyboardEvent) {
+    _handleKeyDown (event:KeyboardEvent) {
         if (!this._isActive) return
+        // Respect inner widgets that have already handled the key
+        // (e.g. a country dropdown closing on Escape).
+        if (event.defaultPrevented) return
 
-        key = key.toLowerCase()
+        const key = event.key.toLowerCase()
 
         // Escape key?
         if (

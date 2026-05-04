@@ -255,6 +255,38 @@ test('emits close event when clicking close button', async t => {
         'close event should be emitted when clicking close button')
 })
 
+test('Escape with defaultPrevented does not close modal', async t => {
+    document.body.innerHTML = `
+        <modal-window id="default-prevented-test" animated="false">
+            <h2>Default Prevented Test</h2>
+            <input id="inner-input" />
+        </modal-window>
+    `
+
+    const modal = await waitFor('modal-window') as ModalWindow
+    modal.open()
+    await sleep(50)
+    t.equal(modal.getAttribute('active'), 'true', 'modal should be open')
+
+    // Simulate a nested widget (e.g. intl-tel-input country dropdown)
+    // handling Escape and calling preventDefault.
+    const input = document.getElementById('inner-input') as HTMLInputElement
+    input.addEventListener('keydown', event => {
+        if (event.key === 'Escape') event.preventDefault()
+    })
+
+    // Dispatch from the inner element so it bubbles to document.
+    input.dispatchEvent(new KeyboardEvent('keydown', {
+        key: 'Escape',
+        bubbles: true,
+        cancelable: true
+    }))
+
+    await sleep(100)
+    t.equal(modal.getAttribute('active'), 'true',
+        'modal should stay open when Escape is preventDefault-ed')
+})
+
 test('all done', () => {
     // @ts-expect-error tests
     window.testsFinished = true
