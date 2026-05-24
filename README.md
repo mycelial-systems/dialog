@@ -52,9 +52,6 @@ See [smashingmagazine.com article](https://www.smashingmagazine.com/2022/04/cta-
 
 </details>
 
-## Demo
-
-See [substrate-system.github.io/modal](https://substrate-system.github.io/modal/).
 
 ## Install
 
