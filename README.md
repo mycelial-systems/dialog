@@ -18,7 +18,6 @@ See [smashingmagazine.com article](https://www.smashingmagazine.com/2022/04/cta-
 
 <!-- toc -->
 
-- [Demo](#demo)
 - [Install](#install)
 - [Use](#use)
   * [FOUCE](#fouce)
