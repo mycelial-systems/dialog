@@ -556,6 +556,10 @@ export class ModalWindow extends WebComponent.create('modal-window') {
         // (e.g. a country dropdown closing on Escape).
         if (event.defaultPrevented) return
 
+        // Autocomplete/autofill widgets sometimes dispatch a synthetic
+        // keydown as a plain Event, which has no `key`. Ignore it.
+        if (!event.key) return
+
         const key = event.key.toLowerCase()
 
         // Escape key?

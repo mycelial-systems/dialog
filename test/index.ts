@@ -287,6 +287,39 @@ test('Escape with defaultPrevented does not close modal', async t => {
         'modal should stay open when Escape is preventDefault-ed')
 })
 
+test('keydown event without a key does not throw', async t => {
+    document.body.innerHTML = `
+        <modal-window id="no-key-test" animated="false">
+            <h2>Autocomplete Test</h2>
+            <input id="autocomplete-input" />
+        </modal-window>
+    `
+
+    const modal = await waitFor('modal-window') as ModalWindow
+    modal.open()
+    await sleep(50)
+    t.equal(modal.getAttribute('active'), 'true', 'modal should be open')
+
+    const input = document.getElementById('autocomplete-input') as
+        HTMLInputElement
+
+    // Autocomplete/autofill widgets (e.g. intl-tel-input) fill the input
+    // and dispatch a synthetic keydown as a plain Event, which has no
+    // `key` property. It bubbles to the document-level handler.
+    let caught:ErrorEvent|null = null
+    const onError = (event:ErrorEvent) => { caught = event }
+    window.addEventListener('error', onError)
+
+    input.dispatchEvent(new Event('keydown', { bubbles: true }))
+    await sleep(50)
+    window.removeEventListener('error', onError)
+
+    t.equal(caught, null,
+        'a keydown without a key should not throw in the handler')
+    t.equal(modal.getAttribute('active'), 'true',
+        'modal should remain open')
+})
+
 test('all done', () => {
     // @ts-expect-error tests
     window.testsFinished = true
